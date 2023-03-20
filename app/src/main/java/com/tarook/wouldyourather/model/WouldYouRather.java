@@ -8,10 +8,19 @@ public class WouldYouRather {
     private String question;
     private ArrayList<String> options;
 
-    public WouldYouRather(int id, String question, ArrayList<String> options) {
+    public WouldYouRather(String question){ // this constructor should only be used when we create a new WYR
+        this.question = question;
+        options = new ArrayList<>();
+    }
+    public WouldYouRather(int id, String question) { // this constructor should only be used when we get the data from the database because the id is already set
         this.id = id;
         this.question = question;
-        this.options = options;
+        options = new ArrayList<>();
+    }
+
+
+    public void addOption(String option) {
+        options.add(option);
     }
 
     public int getId() {
@@ -24,5 +33,14 @@ public class WouldYouRather {
 
     public ArrayList<String> getOptions() {
         return options;
+    }
+
+    @Override
+    public String toString() {
+        return "WouldYouRather{" +
+                "id=" + id +
+                ", question='" + question + '\'' +
+                ", options=" + options +
+                '}';
     }
 }
