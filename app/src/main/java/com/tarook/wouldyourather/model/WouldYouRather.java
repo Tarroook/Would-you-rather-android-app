@@ -3,6 +3,7 @@ package com.tarook.wouldyourather.model;
 import java.util.ArrayList;
 
 public class WouldYouRather {
+    public static ArrayList<WouldYouRather> WYRLIST = new ArrayList<>();
     private int id;
     private String question;
     private ArrayList<String> options;
