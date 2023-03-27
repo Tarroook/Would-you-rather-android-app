@@ -4,15 +4,10 @@ import java.util.ArrayList;
 
 public class ProfileDatabase {
 
-    private static ArrayList<Profile> profiles;
+    private static ArrayList<Profile> profiles = new ArrayList<>();
 
-    private static int id;
+    private static int id = 0;
 
-
-    public static void initDatabase(){
-        profiles = new ArrayList<>();
-        id = 0;
-    }
 
     public static void addProfile(String name, String description){
         profiles.add(new Profile(id, name, description));

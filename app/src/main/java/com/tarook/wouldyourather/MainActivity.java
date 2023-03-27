@@ -2,8 +2,10 @@ package com.tarook.wouldyourather;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.tarook.wouldyourather.model.WYRAdapter;
@@ -16,6 +18,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
+    private Button profileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +29,29 @@ public class MainActivity extends AppCompatActivity {
         setupViews();
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
         ArrayList<WouldYouRather> wyrList = sqLiteManager.getAllWYRS();
+        debugDB(wyrList);
+        WouldYouRather.WYRLIST = wyrList;
+        setupAdapter();
+        profileButton = findViewById(R.id.profile_button);
+        profileButton.setOnClickListener(v -> {
+            Intent intent;
+            if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
+                intent = new Intent(MainActivity.this, ConnectionActivity.class);
+            else
+                intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        //fillListTemp();
+        //this.deleteDatabase("wyrDB");
+    }
+
+    private void debugDB(ArrayList<WouldYouRather> wyrList) {
         Log.d("WYR", "onCreate: " + wyrList.size() + " WYRs loaded from DB" + wyrList.toString());
         for(WouldYouRather wyr : wyrList){
             Log.d("WYR", "onCreate: " + wyr.toString());
             Log.d("WYR", "onCreate: " + wyr.getOptions().toString());
         }
-        WouldYouRather.WYRLIST = wyrList;
-        setupAdapter();
-        //fillListTemp();
-        //this.deleteDatabase("wyrDB");
     }
 
     private void setupAdapter() {

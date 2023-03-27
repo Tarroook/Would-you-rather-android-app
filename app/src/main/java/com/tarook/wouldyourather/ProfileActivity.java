@@ -64,7 +64,6 @@ public class ProfileActivity extends AppCompatActivity {
         //TODO
         Profile profile = ProfileDatabase.getProfile(sharedPreferences.getInt("connectedProfile", -1));
         return profile;
-
     }
 
     private void refreshProfile(){
