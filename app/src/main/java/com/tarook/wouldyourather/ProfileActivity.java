@@ -38,7 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
         Profile profile = getProfile();
         if(profile == null){
             Toast.makeText(getApplicationContext(), "Error: profile not found.", Toast.LENGTH_SHORT).show();
-            finish();
+            Intent intent = new Intent(ProfileActivity.this, ConnectionActivity.class);
+            startActivity(intent);
         }
         else {
             name.setText(profile.getName());
