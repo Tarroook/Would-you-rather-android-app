@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         setupViews();
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-        //this.deleteDatabase("wyrDB");
         ArrayList<WouldYouRather> wyrList = sqLiteManager.getAllWYRS();
         Log.d("WYR", "onCreate: " + wyrList.size() + " WYRs loaded from DB" + wyrList.toString());
         for(WouldYouRather wyr : wyrList){
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         WouldYouRather.WYRLIST = wyrList;
         setupAdapter();
         //fillListTemp();
+        //this.deleteDatabase("wyrDB");
     }
 
     private void setupAdapter() {
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         wyr.addOption("Cat");
         wyr.addOption("Dog");
         sqLiteManager.addWYR(wyr);
-        /*
+
         WouldYouRather wyr2 = new WouldYouRather("Would you rather be able to fly or be invisible?");
         wyr2.addOption("Fly");
         wyr2.addOption("Invisible");
@@ -68,7 +68,5 @@ public class MainActivity extends AppCompatActivity {
         wyr4.addOption("Smart fella");
         wyr4.addOption("Fart smella");
         sqLiteManager.addWYR(wyr4);
-
-         */
     }
 }
