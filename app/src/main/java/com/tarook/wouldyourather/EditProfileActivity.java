@@ -2,7 +2,6 @@ package com.tarook.wouldyourather;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tarook.wouldyourather.model.Profile;
-import com.tarook.wouldyourather.model.ProfileDatabase;
+import com.tarook.wouldyourather.util.SQLiteManager;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -108,8 +107,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private boolean nameNotAlreadyTaken(){
         if(!nameChange.getText().toString().equals(name)){
-            //TODO
-            if(ProfileDatabase.getProfile(nameChange.getText().toString()) != null){
+            if(SQLiteManager.getInstance(this).getUserByUsername(nameChange.getText().toString()) != null){
                 nameTakenMessage.setText("This name is already taken.");
                 return false;
             }
@@ -118,17 +116,16 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
-
     private Profile getProfile(){
-        //TODO
-        Profile profile = ProfileDatabase.getProfile(sharedPreferences.getInt("connectedProfile", -1));
-        return profile;
+        return SQLiteManager.getInstance(this).getUserById(sharedPreferences.getInt(ConnectionActivity.CONNECTED_PROFILE, -1));
     }
 
 
     private void updateProfile(){
-        //TODO
-        ProfileDatabase.updateProfile(sharedPreferences.getInt("connectedProfile", -1), nameChange.getText().toString(), descriptionChange.getText().toString());
+        Profile profile = getProfile();
+        profile.setName(nameChange.getText().toString());
+        profile.setDescription(descriptionChange.getText().toString());
+        SQLiteManager.getInstance(this).updateUser(profile);
         finish();
     }
 

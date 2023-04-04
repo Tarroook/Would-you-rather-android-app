@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.tarook.wouldyourather.model.Profile;
 import com.tarook.wouldyourather.model.WouldYouRather;
 
 import java.io.ByteArrayOutputStream;
@@ -166,6 +167,81 @@ public class SQLiteManager extends SQLiteOpenHelper{
             }
         }
         return wyrList;
+    }
+
+    public void addUser(Profile profile){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(USERS_USERNAME, profile.getName());
+        values.put(USERS_DESCRIPTION, profile.getDescription());
+        values.put(USERS_PICTURE, getBitmapAsByteArray(profile.getProfilePicture()));
+
+        db.insert(USERS_TABLE, null, values);
+    }
+
+    public Profile getUserById(int id){
+        SQLiteDatabase db = getReadableDatabase();
+        // get the user
+        try(Cursor c = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE " + USERS_ID + " = " + id, null)){
+            if(c.moveToFirst()){
+                @SuppressLint("Range") int userId = c.getInt(c.getColumnIndex(USERS_ID));
+                @SuppressLint("Range") String username = c.getString(c.getColumnIndex(USERS_USERNAME));
+                @SuppressLint("Range") String description = c.getString(c.getColumnIndex(USERS_DESCRIPTION));
+                @SuppressLint("Range") Bitmap picture = getBitmapFromByteArray(c.getBlob(c.getColumnIndex(USERS_PICTURE)));
+                return new Profile(userId, username, description, picture);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Profile getUserByUsername(String username){
+        SQLiteDatabase db = getReadableDatabase();
+        // get the user
+        try(Cursor c = db.rawQuery("SELECT * FROM " + USERS_TABLE + " WHERE " + USERS_USERNAME + " = '" + username + "'", null)){
+            if(c.moveToFirst()){
+                @SuppressLint("Range") int userId = c.getInt(c.getColumnIndex(USERS_ID));
+                @SuppressLint("Range") String username2 = c.getString(c.getColumnIndex(USERS_USERNAME));
+                @SuppressLint("Range") String description = c.getString(c.getColumnIndex(USERS_DESCRIPTION));
+                @SuppressLint("Range") Bitmap picture = getBitmapFromByteArray(c.getBlob(c.getColumnIndex(USERS_PICTURE)));
+                return new Profile(userId, username2, description, picture);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateUser(Profile profile){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(USERS_USERNAME, profile.getName());
+        values.put(USERS_DESCRIPTION, profile.getDescription());
+        values.put(USERS_PICTURE, getBitmapAsByteArray(profile.getProfilePicture()));
+
+        db.update(USERS_TABLE, values, USERS_ID + " = " + profile.getId(), null);
+    }
+
+    public ArrayList<Profile> getAllUsers(){
+        ArrayList<Profile> userList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        // get the users
+        try(Cursor result = db.rawQuery("SELECT * FROM " + USERS_TABLE, null)){
+            if(result.getCount() != 0) {
+                while (result.moveToNext()) {
+                    @SuppressLint("Range") int userId = result.getInt(result.getColumnIndex(USERS_ID));
+                    @SuppressLint("Range") String username = result.getString(result.getColumnIndex(USERS_USERNAME));
+                    @SuppressLint("Range") String description = result.getString(result.getColumnIndex(USERS_DESCRIPTION));
+                    @SuppressLint("Range") Bitmap picture = getBitmapFromByteArray(result.getBlob(result.getColumnIndex(USERS_PICTURE)));
+                    userList.add(new Profile(userId, username, description, picture));
+                }
+            }
+        }
+        return userList;
     }
 
     public void deleteWYR(int id){
