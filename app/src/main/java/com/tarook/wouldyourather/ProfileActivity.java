@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tarook.wouldyourather.model.Profile;
-import com.tarook.wouldyourather.model.ProfileDatabase;
+import com.tarook.wouldyourather.util.SQLiteManager;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -37,7 +37,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         Profile profile = getProfile();
         if(profile == null){
-            Toast.makeText(getApplicationContext(), "Error: profile not found.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(ProfileActivity.this, ConnectionActivity.class);
             startActivity(intent);
         }
@@ -62,9 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private Profile getProfile(){
-        //TODO
-        Profile profile = ProfileDatabase.getProfile(sharedPreferences.getInt("connectedProfile", -1));
-        return profile;
+        return SQLiteManager.getInstance(this).getUserById(sharedPreferences.getInt(ConnectionActivity.CONNECTED_PROFILE, -1));
     }
 
     private void refreshProfile(){

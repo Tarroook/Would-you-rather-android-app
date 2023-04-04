@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,12 +12,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.tarook.wouldyourather.model.Profile;
-import com.tarook.wouldyourather.model.ProfileDatabase;
+import com.tarook.wouldyourather.util.SQLiteManager;
 
 public class ConnectionActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_CONNECTION = 3;
     public final static String SHARED_PREFS = "sharedPrefs";
+    public static final String CONNECTED_PROFILE = "connectedProfile";
     private SharedPreferences sharedPreferences;
 
     private EditText name;
@@ -37,18 +37,13 @@ public class ConnectionActivity extends AppCompatActivity {
 
         name.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 connectionButton.setEnabled(!s.toString().isEmpty());
-                //TODO
-                if(!s.toString().isEmpty() && ProfileDatabase.getProfile(s.toString()) != null){
+                if(!s.toString().isEmpty() && SQLiteManager.getInstance(ConnectionActivity.this).getUserByUsername(s.toString()) != null){
                     connectionButton.setText("Sign in");
                 }
                 else{
@@ -62,15 +57,13 @@ public class ConnectionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "You are connected.", Toast.LENGTH_SHORT).show();
 
-                //TODO
-                Profile profile = ProfileDatabase.getProfile(name.getText().toString());
+                Profile profile = SQLiteManager.getInstance(ConnectionActivity.this).getUserByUsername(name.getText().toString());
                 if(profile == null){
-                    ProfileDatabase.addProfile(name.getText().toString(), "Empty description");
-                    profile = ProfileDatabase.getProfile(name.getText().toString());
+                    SQLiteManager.getInstance(ConnectionActivity.this).addUser(new Profile(ConnectionActivity.this, name.getText().toString(), "Empty description"));
+                    profile = SQLiteManager.getInstance(ConnectionActivity.this).getUserByUsername(name.getText().toString());
                 }
 
-                sharedPreferences.edit().putInt("connectedProfile", profile.getId()).apply();
-
+                sharedPreferences.edit().putInt(CONNECTED_PROFILE, profile.getId()).apply();
 
                 finish();
             }
