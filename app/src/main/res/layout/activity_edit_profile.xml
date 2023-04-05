@@ -22,6 +22,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <ImageView
+            android:id="@+id/edit_profile_activity_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/defaultpp" />
+
+        <Button
+            android:id="@+id/edit_profile_activity_button_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change picture" />
+
         <TextView
             android:id="@+id/edit_profile_activity_text_name"
             android:layout_width="match_parent"
@@ -63,6 +75,13 @@
 
         <TextView
             android:id="@+id/edit_profile_activity_username_taken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/edit_profile_activity_description_too_long"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
