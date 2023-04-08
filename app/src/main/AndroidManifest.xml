@@ -12,6 +12,9 @@
         android:theme="@style/Theme.WouldYouRather"
         tools:targetApi="31">
         <activity
+            android:name=".DetailledDilemnaActivity"
+            android:exported="false" />
+        <activity
             android:name=".ConnectionActivity"
             android:exported="false" />
         <activity

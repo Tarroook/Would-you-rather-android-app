@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.tarook.wouldyourather.model.TTSManager;
 import com.tarook.wouldyourather.model.WYRAdapter;
 import com.tarook.wouldyourather.model.WouldYouRather;
 import com.tarook.wouldyourather.util.SQLiteManager;
@@ -18,11 +21,12 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private Button profileButton;
+    private Button profileButton, addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Objects.requireNonNull(getSupportActionBar()).hide();
@@ -40,6 +44,28 @@ public class MainActivity extends AppCompatActivity {
             else
                 intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
+        });
+
+        addButton = findViewById(R.id.add_button);
+        addButton.setOnClickListener(v -> {
+            WouldYouRather wyr = new WouldYouRather("Would you rather fight 10 cats or 10 dogs ?");
+            wyr.addOption("10 cats");
+            wyr.addOption("10 dogs");
+            SQLiteManager.getInstance(this).addWYR(wyr);
+        });
+
+        WYRAdapter adapter = new WYRAdapter(getApplicationContext(), WouldYouRather.WYRLIST);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
+                WouldYouRather selectedWYR = (WouldYouRather) listView.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, DetailledDilemnaActivity.class);
+                intent.putExtra("question", selectedWYR.getQuestion());
+                intent.putExtra("option1",selectedWYR.getOptions().get(0));
+                intent.putExtra("option2",selectedWYR.getOptions().get(1));
+                startActivity(intent);
+            }
         });
 
         //fillListTemp();
