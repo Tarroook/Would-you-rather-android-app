@@ -29,6 +29,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
     private static final String OPTIONS_ID = "id";
     private static final String OPTIONS_OPTION = "option";
     private static final String OPTIONS_WYR_ID = "wyrInfos_id";
+    private static final String OPTIONS_NUMBER = "number"; // 0 or 1
 
     private static final String USERS_TABLE = "users";
     private static final String USERS_ID = "id";
@@ -39,7 +40,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
     private static final String VOTES_TABLE = "votes";
     private static final String VOTES_ID = "id";
     private static final String VOTES_WYR_ID = "wyrInfos_id";
-    private static final String VOTES_OPTION_ID = "option_id";
+    private static final String VOTES_OPTION_NUMBER = "option_id";
     private static final String VOTES_USER_ID = "user_id";
 
     private SQLiteManager(Context context) {
@@ -66,6 +67,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
         sql = new StringBuilder().append("CREATE TABLE ").append(OPTIONS_TABLE).append(" (")
                 .append(OPTIONS_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(OPTIONS_OPTION).append(" TEXT, ")
+                .append(OPTIONS_NUMBER).append(" INTEGER, ")
                 .append(OPTIONS_WYR_ID).append(" INTEGER, ")
                 .append("FOREIGN KEY (").append(OPTIONS_WYR_ID).append(") REFERENCES wyrInfos(id));");
         db.execSQL(sql.toString());
@@ -81,10 +83,10 @@ public class SQLiteManager extends SQLiteOpenHelper{
 
         sql = new StringBuilder().append("CREATE TABLE ").append(VOTES_TABLE).append(" (")
                 .append(VOTES_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
-                .append(VOTES_OPTION_ID).append(" INTEGER, ")
+                .append(VOTES_OPTION_NUMBER).append(" INTEGER, ")
                 .append(VOTES_USER_ID).append(" INTEGER, ")
                 .append(VOTES_WYR_ID).append(" INTEGER, ")
-                .append("FOREIGN KEY (").append(VOTES_OPTION_ID).append(") REFERENCES options(id), ")
+                .append("FOREIGN KEY (").append(VOTES_OPTION_NUMBER).append(") REFERENCES options(id), ")
                 .append("FOREIGN KEY (").append(VOTES_USER_ID).append(") REFERENCES users(id), ")
                 .append("FOREIGN KEY (").append(VOTES_WYR_ID).append(") REFERENCES wyrInfos(id));");
         db.execSQL(sql.toString());
@@ -115,6 +117,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
         for(String option : options){
             values.put(OPTIONS_OPTION, option);
             values.put(OPTIONS_WYR_ID, wyrId);
+            values.put(OPTIONS_NUMBER, options.indexOf(option));
             db.insert(OPTIONS_TABLE, null, values);
             values.clear();
         }
@@ -171,6 +174,28 @@ public class SQLiteManager extends SQLiteOpenHelper{
             }
         }
         return wyrList;
+    }
+
+    public int getNumberOfVotesForWYR(int wyrId){
+        SQLiteDatabase db = getReadableDatabase();
+        int numberOfVotes = 0;
+        try(Cursor result = db.rawQuery("SELECT * FROM " + VOTES_TABLE + " WHERE " + VOTES_WYR_ID + " = " + wyrId, null)){
+            if(result.getCount() != 0) {
+                numberOfVotes = result.getCount();
+            }
+        }
+        return numberOfVotes;
+    }
+
+    public int getNumberOfVotesForOption(int wyrId, int optionNumber){
+        SQLiteDatabase db = getReadableDatabase();
+        int numberOfVotes = 0;
+        try(Cursor result = db.rawQuery("SELECT * FROM " + VOTES_TABLE + " WHERE " + VOTES_WYR_ID + " = " + wyrId + " AND " + VOTES_OPTION_NUMBER + " = " + optionNumber, null)){
+            if(result.getCount() != 0) {
+                numberOfVotes = result.getCount();
+            }
+        }
+        return numberOfVotes;
     }
 
     public void addUser(Profile profile){
@@ -267,6 +292,8 @@ public class SQLiteManager extends SQLiteOpenHelper{
             if(result.getCount() != 0) {
                 return true;
             }
+        }catch (Exception e){
+            return false;
         }
         return false;
     }
@@ -277,7 +304,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(VOTES_WYR_ID, vote.getWyrId());
         values.put(VOTES_USER_ID, vote.getUserId());
-        values.put(VOTES_OPTION_ID, vote.getOptionId());
+        values.put(VOTES_OPTION_NUMBER, vote.getOptionNumber());
 
         db.insert(VOTES_TABLE, null, values);
     }
@@ -295,7 +322,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
                 @SuppressLint("Range") int voteId = c.getInt(c.getColumnIndex(VOTES_ID));
                 @SuppressLint("Range") int wyrId2 = c.getInt(c.getColumnIndex(VOTES_WYR_ID));
                 @SuppressLint("Range") int userId2 = c.getInt(c.getColumnIndex(VOTES_USER_ID));
-                @SuppressLint("Range") int optionId = c.getInt(c.getColumnIndex(VOTES_OPTION_ID));
+                @SuppressLint("Range") int optionId = c.getInt(c.getColumnIndex(VOTES_OPTION_NUMBER));
                 return new Vote(voteId, wyrId2, userId2, optionId);
             }
         }catch (Exception e){

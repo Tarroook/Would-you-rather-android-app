@@ -3,19 +3,19 @@ package com.tarook.wouldyourather.model;
 public class Vote {
     private int id;
     private int wyrId;
-    private int optionId;
+    private int optionNumber;
     private int userId;
 
-    public Vote(int id, int wyrId, int optionId, int userId) {
+    public Vote(int id, int wyrId, int optionNumber, int userId) {
         this.id = id;
         this.wyrId = wyrId;
-        this.optionId = optionId;
+        this.optionNumber = optionNumber;
         this.userId = userId;
     }
 
-    public Vote(int wyrId, int optionId, int userId) {
+    public Vote(int wyrId, int optionNumber, int userId) {
         this.wyrId = wyrId;
-        this.optionId = optionId;
+        this.optionNumber = optionNumber;
         this.userId = userId;
     }
 
@@ -35,12 +35,12 @@ public class Vote {
         this.wyrId = wyrId;
     }
 
-    public int getOptionId() {
-        return optionId;
+    public int getOptionNumber() {
+        return optionNumber;
     }
 
-    public void setOptionId(int optionId) {
-        this.optionId = optionId;
+    public void setOptionNumber(int optionNumber) {
+        this.optionNumber = optionNumber;
     }
 
     public int getUserId() {
