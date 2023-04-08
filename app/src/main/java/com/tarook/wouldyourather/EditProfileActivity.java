@@ -1,15 +1,20 @@
 package com.tarook.wouldyourather;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,13 +26,18 @@ public class EditProfileActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_EDIT_PROFILE = 2;
     public final static String SHARED_PREFS = "sharedPrefs";
     private SharedPreferences sharedPreferences;
-
+    private ImageView picture;
+    private Button changePictureButton;
     private EditText nameChange;
     private EditText descriptionChange;
     private Button confirmButton;
     private TextView nameTakenMessage;
+    private TextView descTooLongMessage;
+
     private String name;
     private String description;
+    private boolean pictureChanged;
+    private Bitmap newPicture;
 
 
     @Override
@@ -36,12 +46,18 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-
+        picture = findViewById(R.id.edit_profile_activity_picture);
+        changePictureButton = findViewById(R.id.edit_profile_activity_button_picture);
         nameChange = findViewById(R.id.edit_profile_activity_name);
         descriptionChange = findViewById(R.id.edit_profile_activity_description);
         nameTakenMessage = findViewById(R.id.edit_profile_activity_username_taken);
+        descTooLongMessage = findViewById(R.id.edit_profile_activity_description_too_long);
         confirmButton = findViewById(R.id.edit_profile_activity_confirm_button);
         confirmButton.setEnabled(false);
+
+        descriptionChange.setMaxLines(10);
+
+        pictureChanged = false;
 
         Profile profile = getProfile();
         if(profile == null){
@@ -52,6 +68,7 @@ public class EditProfileActivity extends AppCompatActivity {
             name = profile.getName();
             description = profile.getDescription();
 
+            picture.setImageBitmap(profile.getProfilePicture());
             nameChange.setText(name);
             descriptionChange.setText(description);
 
@@ -84,6 +101,14 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
 
+
+            changePictureButton.setOnClickListener(v -> {
+                // opens the camera and takes a picture
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 100);
+            });
+
+
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -100,9 +125,22 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            assert data != null;
+            newPicture = (Bitmap) data.getExtras().get("data");
+            picture.setImageBitmap(newPicture);
+            pictureChanged = true;
+            confirmButton.setEnabled(enableButton());
+        }
+    }
+
 
     private boolean enableButton(){
-        return (nameNotAlreadyTaken() && !nameChange.getText().toString().equals("") && !descriptionChange.getText().toString().equals("") && !(nameChange.getText().toString().equals(name) && descriptionChange.getText().toString().equals(description)));
+        if(pictureChanged) return (nameNotAlreadyTaken() && descriptionNotTooLong() && !nameChange.getText().toString().equals("") && !descriptionChange.getText().toString().equals(""));
+        else return (nameNotAlreadyTaken() && descriptionNotTooLong() && !nameChange.getText().toString().equals("") && !descriptionChange.getText().toString().equals("") && !(nameChange.getText().toString().equals(name) && descriptionChange.getText().toString().equals(description)));
     }
 
     private boolean nameNotAlreadyTaken(){
@@ -116,6 +154,15 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean descriptionNotTooLong(){
+        if(descriptionChange.getLineCount() > ProfileActivity.DESCRIPTION_MAX_LINES){
+            descTooLongMessage.setText("The description cannot take more than " + ProfileActivity.DESCRIPTION_MAX_LINES + " lines.");
+            return false;
+        }
+        descTooLongMessage.setText("");
+        return true;
+    }
+
     private Profile getProfile(){
         return SQLiteManager.getInstance(this).getUserById(sharedPreferences.getInt(ConnectionActivity.CONNECTED_PROFILE, -1));
     }
@@ -125,6 +172,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Profile profile = getProfile();
         profile.setName(nameChange.getText().toString());
         profile.setDescription(descriptionChange.getText().toString());
+        if(pictureChanged) profile.setProfilePicture(newPicture);
         SQLiteManager.getInstance(this).updateUser(profile);
         finish();
     }

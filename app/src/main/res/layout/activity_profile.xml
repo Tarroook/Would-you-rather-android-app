@@ -23,6 +23,12 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <ImageView
+            android:id="@+id/profile_activity_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/defaultpp" />
+
         <TextView
             android:id="@+id/profile_activity_name"
             android:layout_width="match_parent"
@@ -43,6 +49,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Edit Profile" />
+
+        <Button
+            android:id="@+id/profile_activity_logout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log out" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
