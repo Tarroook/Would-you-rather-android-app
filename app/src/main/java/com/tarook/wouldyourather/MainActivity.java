@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
                 intent = new Intent(MainActivity.this, ConnectionActivity.class);
             else {
-                if(sqLiteManager.hasVotedFor(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1), WouldYouRather.WYRLIST.get(position).getId()))
+                if(sqLiteManager.hasVotedFor(WouldYouRather.WYRLIST.get(position).getId(), getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1)))
                     intent = new Intent(MainActivity.this, ResultActivity.class);
                 else
                     intent = new Intent(MainActivity.this, WYRActivity.class);
@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
 
         //fillListTemp();
         //this.deleteDatabase("wyrDB");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void debugDB(ArrayList<WouldYouRather> wyrList) {

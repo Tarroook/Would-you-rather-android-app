@@ -286,6 +286,11 @@ public class SQLiteManager extends SQLiteOpenHelper{
         }
     }
 
+    /**
+     * Checks if a user has voted for a wyr
+     * @param wyrId the vote to check
+     * @param userId the user to check
+     */
     public boolean hasVotedFor(int wyrId, int userId){ // gets a user's vote by checking if there is a vote with the same wyrId and userId
         SQLiteDatabase db = getReadableDatabase();
         try(Cursor result = db.rawQuery("SELECT * FROM " + VOTES_TABLE + " WHERE " + VOTES_WYR_ID + " = " + wyrId + " AND " + VOTES_USER_ID + " = " + userId, null)){
