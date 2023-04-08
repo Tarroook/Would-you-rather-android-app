@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.tarook.wouldyourather.model.Profile;
+import com.tarook.wouldyourather.model.Vote;
 import com.tarook.wouldyourather.model.WouldYouRather;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +38,7 @@ public class SQLiteManager extends SQLiteOpenHelper{
 
     private static final String VOTES_TABLE = "votes";
     private static final String VOTES_ID = "id";
+    private static final String VOTES_WYR_ID = "wyrInfos_id";
     private static final String VOTES_OPTION_ID = "option_id";
     private static final String VOTES_USER_ID = "user_id";
 
@@ -81,8 +83,10 @@ public class SQLiteManager extends SQLiteOpenHelper{
                 .append(VOTES_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(VOTES_OPTION_ID).append(" INTEGER, ")
                 .append(VOTES_USER_ID).append(" INTEGER, ")
+                .append(VOTES_WYR_ID).append(" INTEGER, ")
                 .append("FOREIGN KEY (").append(VOTES_OPTION_ID).append(") REFERENCES options(id), ")
-                .append("FOREIGN KEY (").append(VOTES_USER_ID).append(") REFERENCES users(id));");
+                .append("FOREIGN KEY (").append(VOTES_USER_ID).append(") REFERENCES users(id), ")
+                .append("FOREIGN KEY (").append(VOTES_WYR_ID).append(") REFERENCES wyrInfos(id));");
         db.execSQL(sql.toString());
     }
 
@@ -242,6 +246,62 @@ public class SQLiteManager extends SQLiteOpenHelper{
             }
         }
         return userList;
+    }
+
+    public void getOptionsFromWYRID(int wyrId){
+        SQLiteDatabase db = getReadableDatabase();
+        // get the options
+        try(Cursor result = db.rawQuery("SELECT * FROM " + OPTIONS_TABLE + " WHERE " + OPTIONS_WYR_ID + " = " + wyrId, null)){
+            if(result.getCount() != 0) {
+                while (result.moveToNext()) {
+                    @SuppressLint("Range") String option = result.getString(result.getColumnIndex(OPTIONS_OPTION));
+                    // add the option to the wyr
+                }
+            }
+        }
+    }
+
+    public boolean hasVotedFor(int wyrId, int userId){ // gets a user's vote by checking if there is a vote with the same wyrId and userId
+        SQLiteDatabase db = getReadableDatabase();
+        try(Cursor result = db.rawQuery("SELECT * FROM " + VOTES_TABLE + " WHERE " + VOTES_WYR_ID + " = " + wyrId + " AND " + VOTES_USER_ID + " = " + userId, null)){
+            if(result.getCount() != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addVote(Vote vote){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(VOTES_WYR_ID, vote.getWyrId());
+        values.put(VOTES_USER_ID, vote.getUserId());
+        values.put(VOTES_OPTION_ID, vote.getOptionId());
+
+        db.insert(VOTES_TABLE, null, values);
+    }
+
+    public void deleteVote(int wyrId, int userId){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(VOTES_TABLE, VOTES_WYR_ID + " = " + wyrId + " AND " + VOTES_USER_ID + " = " + userId, null);
+    }
+
+    public Vote getVote(int wyrId, int userId){
+        SQLiteDatabase db = getReadableDatabase();
+        // get the vote
+        try(Cursor c = db.rawQuery("SELECT * FROM " + VOTES_TABLE + " WHERE " + VOTES_WYR_ID + " = " + wyrId + " AND " + VOTES_USER_ID + " = " + userId, null)){
+            if(c.moveToFirst()){
+                @SuppressLint("Range") int voteId = c.getInt(c.getColumnIndex(VOTES_ID));
+                @SuppressLint("Range") int wyrId2 = c.getInt(c.getColumnIndex(VOTES_WYR_ID));
+                @SuppressLint("Range") int userId2 = c.getInt(c.getColumnIndex(VOTES_USER_ID));
+                @SuppressLint("Range") int optionId = c.getInt(c.getColumnIndex(VOTES_OPTION_ID));
+                return new Vote(voteId, wyrId2, userId2, optionId);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void deleteWYR(int id){

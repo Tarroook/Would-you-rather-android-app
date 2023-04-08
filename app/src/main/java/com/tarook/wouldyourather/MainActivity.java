@@ -42,6 +42,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            // check if user is connected, if not redirect to connection activity
+            // then check if user has already voted for this wyr, if not redirect to wyr activity
+            // else redirect to results activity
+            Intent intent;
+            if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
+                intent = new Intent(MainActivity.this, ConnectionActivity.class);
+            else {
+                if(sqLiteManager.hasVotedFor(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1), WouldYouRather.WYRLIST.get(position).getId()))
+                    intent = new Intent(MainActivity.this, ResultActivity.class);
+                else
+                    intent = new Intent(MainActivity.this, WYRActivity.class);
+
+                intent.putExtra("wyrId", WouldYouRather.WYRLIST.get(position).getId());
+            }
+            startActivity(intent);
+        });
+
         //fillListTemp();
         //this.deleteDatabase("wyrDB");
     }
