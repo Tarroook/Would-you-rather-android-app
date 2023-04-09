@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.tarook.wouldyourather.model.TTSManager;
 import com.tarook.wouldyourather.model.WYRAdapter;
 import com.tarook.wouldyourather.model.WouldYouRather;
 import com.tarook.wouldyourather.util.SQLiteManager;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private Button profileButton;
+    private Button profileButton, addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         //fillListTemp();
         //this.deleteDatabase("wyrDB");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private void debugDB(ArrayList<WouldYouRather> wyrList) {

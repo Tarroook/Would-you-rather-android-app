@@ -18,6 +18,9 @@
             android:name=".WYRActivity"
             android:exported="false" />
         <activity
+            android:name=".DetailledDilemnaActivity"
+            android:exported="false" />
+        <activity
             android:name=".ConnectionActivity"
             android:exported="false" />
         <activity
