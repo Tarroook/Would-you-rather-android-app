@@ -8,19 +8,20 @@
 
     <TextView
         android:id="@+id/title_textview_game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_width="345dp"
+        android:layout_height="105dp"
         android:gravity="center"
         android:text="WOULD YOU RATHER DO THIS OR THAT"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/bubble_imageview"
+        app:layout_constraintEnd_toEndOf="@+id/bubble_imageview"
+        app:layout_constraintStart_toStartOf="@+id/bubble_imageview"
+        app:layout_constraintTop_toTopOf="@+id/bubble_imageview" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,9 +33,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/white"
             android:backgroundTint="@color/purple_500"
-            android:text="Button" />
+            android:text="Button"
+            android:textColor="@color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/right_button_game"
@@ -44,6 +45,24 @@
             android:backgroundTint="@color/teal_200"
             android:text="Button" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:id="@+id/hand_imageview"
+        android:layout_width="118dp"
+        android:layout_height="144dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hand" />
+
+    <ImageView
+        android:id="@+id/bubble_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hand_imageview"
+        app:srcCompat="@drawable/speech_bubble" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
