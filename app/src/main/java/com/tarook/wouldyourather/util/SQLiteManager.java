@@ -327,8 +327,8 @@ public class SQLiteManager extends SQLiteOpenHelper{
                 @SuppressLint("Range") int voteId = c.getInt(c.getColumnIndex(VOTES_ID));
                 @SuppressLint("Range") int wyrId2 = c.getInt(c.getColumnIndex(VOTES_WYR_ID));
                 @SuppressLint("Range") int userId2 = c.getInt(c.getColumnIndex(VOTES_USER_ID));
-                @SuppressLint("Range") int optionId = c.getInt(c.getColumnIndex(VOTES_OPTION_NUMBER));
-                return new Vote(voteId, wyrId2, userId2, optionId);
+                @SuppressLint("Range") int optionNumber = c.getInt(c.getColumnIndex(VOTES_OPTION_NUMBER));
+                return new Vote(voteId, wyrId2, optionNumber, userId2);
             }
         }catch (Exception e){
             e.printStackTrace();

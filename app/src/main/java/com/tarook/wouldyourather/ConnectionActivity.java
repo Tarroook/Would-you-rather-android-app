@@ -59,7 +59,7 @@ public class ConnectionActivity extends AppCompatActivity {
 
                 Profile profile = SQLiteManager.getInstance(ConnectionActivity.this).getUserByUsername(name.getText().toString());
                 if(profile == null){
-                    SQLiteManager.getInstance(ConnectionActivity.this).addUser(new Profile(ConnectionActivity.this, name.getText().toString(), "Empty description"));
+                    SQLiteManager.getInstance(ConnectionActivity.this).addUser(new Profile(ConnectionActivity.this, name.getText().toString(), "This is my epic description !"));
                     profile = SQLiteManager.getInstance(ConnectionActivity.this).getUserByUsername(name.getText().toString());
                 }
 
