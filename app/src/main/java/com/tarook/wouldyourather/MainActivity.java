@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private Button profileButton, addButton;
+    private SQLiteManager sqLiteManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         Objects.requireNonNull(getSupportActionBar()).hide();
         setupViews();
-        SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-        ArrayList<WouldYouRather> wyrList = sqLiteManager.getAllWYRS();
-        debugDB(wyrList);
-        WouldYouRather.WYRLIST = wyrList;
-        setupAdapter();
-        profileButton = findViewById(R.id.profile_button);
+        sqLiteManager = SQLiteManager.getInstance(this);
+
+
         profileButton.setOnClickListener(v -> {
             Intent intent;
             if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
@@ -61,8 +59,20 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddWYRActivity.class);
+            startActivity(intent);
+        });
+
         //fillListTemp();
         //this.deleteDatabase("wyrDB");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        WouldYouRather.WYRLIST = sqLiteManager.getAllWYRS();
+        setupAdapter();
     }
 
     private void debugDB(ArrayList<WouldYouRather> wyrList) {
@@ -80,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViews() {
         listView = findViewById(R.id.wyr_list);
+        profileButton = findViewById(R.id.profile_button);
+        addButton = findViewById(R.id.add_button);
     }
 
     private void fillListTemp(){
