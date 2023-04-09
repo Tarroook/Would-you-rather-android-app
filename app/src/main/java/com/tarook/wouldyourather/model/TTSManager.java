@@ -25,6 +25,7 @@ import android.os.Looper;
 import android.os.UserHandle;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
+import android.speech.tts.Voice;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -50,8 +51,16 @@ public class TTSManager extends Context implements TextToSpeech.OnInitListener{
 
     public TTSManager(Context context) {
 
-        textToSpeech = new TextToSpeech(context, this);
+        textToSpeech = new TextToSpeech(context, this, "com.google.android.tts");
         text = null;
+    }
+
+    public void setVoice(String voiceName){ // counldn't make it work :(
+        for (Voice tmpVoice : textToSpeech.getVoices()) {
+            if (tmpVoice.getName().equals(voiceName)) {
+                textToSpeech.setVoice(tmpVoice);
+            }
+        }
     }
 
     public void changeText(String text){
@@ -68,7 +77,7 @@ public class TTSManager extends Context implements TextToSpeech.OnInitListener{
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
-            int result = textToSpeech.setLanguage(Locale.US);
+            int result = textToSpeech.setLanguage(Locale.UK);
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("error", "This Language is not supported");
             } else {
