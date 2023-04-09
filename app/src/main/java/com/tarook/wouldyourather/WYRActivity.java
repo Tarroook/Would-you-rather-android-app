@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tarook.wouldyourather.model.TTSManager;
 import com.tarook.wouldyourather.model.Vote;
 import com.tarook.wouldyourather.model.WouldYouRather;
 import com.tarook.wouldyourather.util.SQLiteManager;
@@ -16,6 +17,7 @@ public class WYRActivity extends AppCompatActivity {
     private AppCompatButton option1;
     private AppCompatButton option2;
     private TextView question;
+    private TTSManager ttsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,7 @@ public class WYRActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wyractivity);
 
         setupViews();
-
+        ttsManager = new TTSManager(this);
         WouldYouRather wyr = SQLiteManager.getInstance(this).getWYR(getIntent().getIntExtra("wyrId", -1));
         if (wyr != null) {
             question.setText(wyr.getQuestion());
@@ -42,6 +44,9 @@ public class WYRActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: WYR not found", Toast.LENGTH_SHORT).show();
             finish();
         }
+        assert wyr != null;
+        ttsManager.changeText(wyr.getQuestion());
+        ttsManager.say();
     }
 
     private void setupViews(){
