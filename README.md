@@ -14,7 +14,7 @@ Those are :
 - SMS
 
 
-This app was done in a total of about 8 hours.
+This app was done in a total of about 8 hours spread over multiple weeks.
 
 ![image](https://user-images.githubusercontent.com/52744447/230750587-0f2f401e-b4f1-470d-ab57-9395398a61ce.png)
 
