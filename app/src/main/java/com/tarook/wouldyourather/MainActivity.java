@@ -1,8 +1,15 @@
 package com.tarook.wouldyourather;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         profileButton.setOnClickListener(v -> {
             Intent intent;
-            if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
+            if (getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
                 intent = new Intent(MainActivity.this, ConnectionActivity.class);
             else
                 intent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -46,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
             // then check if user has already voted for this wyr, if not redirect to wyr activity
             // else redirect to results activity
             Intent intent;
-            if(getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
+            if (getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1) == -1)
                 intent = new Intent(MainActivity.this, ConnectionActivity.class);
             else {
-                if(sqLiteManager.hasVotedFor(WouldYouRather.WYRLIST.get(position).getId(), getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1)))
+                if (sqLiteManager.hasVotedFor(WouldYouRather.WYRLIST.get(position).getId(), getSharedPreferences(ProfileActivity.SHARED_PREFS, MODE_PRIVATE).getInt("connectedProfile", -1)))
                     intent = new Intent(MainActivity.this, ResultActivity.class);
                 else
                     intent = new Intent(MainActivity.this, WYRActivity.class);
@@ -64,8 +71,36 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("wyrChannel", "Would You Rather", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
         //fillListTemp();
         //this.deleteDatabase("wyrDB");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sendNotification();
+    }
+
+    private void sendNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "wyrChannel")
+                .setSmallIcon(R.drawable.pissbaby)
+                .setContentTitle("Welcome to Would You Rather")
+                .setContentText("Start by creating your account :)")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        if(checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO}, 1);
+        }
+        notificationManager.notify(1, builder.build());
     }
 
     @Override
